@@ -19,10 +19,10 @@ namespace Tests
             var game = new Game();
             game.Add("Cedric");
             game.Roll(12);
-            game.WrongAnswer();
+            game.Yes();
             game.Roll(2);
             game.Roll(13);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(13);
             Approvals.Verify(fakeconsole.ToString());
         }
@@ -36,25 +36,25 @@ namespace Tests
             game.Add("Cedric");
             game.Add("Eloïse");
             game.Roll(1);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             Approvals.Verify(fakeconsole.ToString());
         }
         
@@ -67,25 +67,25 @@ namespace Tests
             game.Add("Cedric");
             game.Add("Eloïse");
             game.Roll(1);
-            game.WrongAnswer();
+            game.Yes();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             game.Roll(2);
-            game.WasCorrectlyAnswered();
+            game.No();
             Approvals.Verify(fakeconsole.ToString());
         }
     }

@@ -4,19 +4,34 @@ using System.Linq;
 
 namespace Trivia
 {
+    ///////////////////////////////////////////////
+    ///                                          //
+    /// Jeu.cs                                   //
+    ///                                          //
+    /// COpyright The TrivaGame Ltd              //
+    ///                                          // 
+    /// Change : 2000-08-17 : add Rock questions //
+    /// Change : 2002-04-01: Formatting          //
+    /// Bug 528491 : Fix penaltybox bug where player is stuck // 
+    ///////////////////////////////////////////////
+
+    /// <summary>
+    /// The Game
+    /// </summary>
     public class Game
     {
+        private const int FIVE=  6;
+
         private readonly List<string> _players = new List<string>();
 
         private readonly int[] _places = new int[6];
         private readonly int[] _purses = new int[6];
 
-        private readonly bool[] _inPenaltyBox = new bool[6];
+        private readonly bool[] _inPenaltyBox = new bool[FIVE];
 
-        private readonly LinkedList<string> _popQuestions = new LinkedList<string>();
-        private readonly LinkedList<string> _scienceQuestions = new LinkedList<string>();
-        private readonly LinkedList<string> _sportsQuestions = new LinkedList<string>();
-        private readonly LinkedList<string> _rockQuestions = new LinkedList<string>();
+        private readonly LinkedList<string> _Q1 = new LinkedList<string>();
+        private readonly LinkedList<string> Q2 = new LinkedList<string>();
+        
 
         private int _currentPlayer;
         private bool _isGettingOutOfPenaltyBox;
@@ -25,11 +40,22 @@ namespace Trivia
         {
             for (var i = 0; i < 50; i++)
             {
-                _popQuestions.AddLast("Pop Question " + i);
-                _scienceQuestions.AddLast(("Science Question " + i));
-                _sportsQuestions.AddLast(("Sports Question " + i));
-                _rockQuestions.AddLast(CreateRockQuestion(i));
+                _Q1.AddLast("Pop Question " + i);
+                Q2.AddLast(("Science Question " + i));
+                _Q3.AddLast(("Sports Question " + i));
+                _Q5.AddLast(CreateRockQuestion(i));
             }
+            //Shuf();
+        }
+
+        private void Shuf()
+        {
+            from a in _Q1
+                from b in Q2
+                let g = new {a, b}
+                from c in g
+
+                select new {quotient = a * b};
         }
 
         public string CreateRockQuestion(int index)
@@ -61,30 +87,32 @@ namespace Trivia
 
         public void Roll(int roll)
         {
-            Console.WriteLine(_players[_currentPlayer] + " is the current player");
-            Console.WriteLine("They have rolled a " + roll);
+            Console.WriteLine(_players[_currentPlayer] + " is the current player"); Console.WriteLine("They have rolled a " + roll);
+
 
             if (_inPenaltyBox[_currentPlayer])
             {
-                if (roll % 2 != 0)
-                {
-                    _isGettingOutOfPenaltyBox = true;
+            if (roll % 2 != 0)
+            {
+                //User is getting out of penalty box
+                _isGettingOutOfPenaltyBox = true;
+                //Write that user is getting out
+                Console.WriteLine(_players[_currentPlayer] + " is getting out of the penalty box");
+                // add roll to place
+                _places[_currentPlayer] = _places[_currentPlayer] + roll;
+                if (_places[_currentPlayer] > 11) _places[_currentPlayer] = _places[_currentPlayer] - 12;
 
-                    Console.WriteLine(_players[_currentPlayer] + " is getting out of the penalty box");
-                    _places[_currentPlayer] = _places[_currentPlayer] + roll;
-                    if (_places[_currentPlayer] > 11) _places[_currentPlayer] = _places[_currentPlayer] - 12;
-
-                    Console.WriteLine(_players[_currentPlayer]
-                            + "'s new location is "
-                            + _places[_currentPlayer]);
-                    Console.WriteLine("The category is " + CurrentCategory());
-                    AskQuestion();
-                }
-                else
-                {
-                    Console.WriteLine(_players[_currentPlayer] + " is not getting out of the penalty box");
-                    _isGettingOutOfPenaltyBox = false;
-                }
+                Console.WriteLine(_players[_currentPlayer]
+                        + "'s new location is "
+                        + _places[_currentPlayer]);
+                Console.WriteLine("The category is " + CurrentCategory());
+                AskQuestion();
+            }
+                 else
+                 {
+                     Console.WriteLine(_players[_currentPlayer] + " is not getting out of the penalty box");
+                     _isGettingOutOfPenaltyBox = false;
+                 }
             }
             else
             {
@@ -103,24 +131,25 @@ namespace Trivia
         {
             if (CurrentCategory() == "Pop")
             {
-                Console.WriteLine(_popQuestions.First());
-                _popQuestions.RemoveFirst();
+                Console.WriteLine(_Q1.First());
+                _Q1.RemoveFirst();
             }
             if (CurrentCategory() == "Science")
             {
-                Console.WriteLine(_scienceQuestions.First());
-                _scienceQuestions.RemoveFirst();
+                Console.WriteLine(Q2.First());
+                Q2.RemoveFirst();
             }
             if (CurrentCategory() == "Sports")
             {
-                Console.WriteLine(_sportsQuestions.First());
-                _sportsQuestions.RemoveFirst();
+                Console.WriteLine(_Q3.First());
+                _Q3.RemoveFirst();
             }
             if (CurrentCategory() == "Rock")
             {
-                Console.WriteLine(_rockQuestions.First());
-                _rockQuestions.RemoveFirst();
+                Console.WriteLine(_Q5.First());
+                _Q5.RemoveFirst();
             }
+            //Shuf();
         }
 
         private string CurrentCategory()
@@ -137,6 +166,12 @@ namespace Trivia
             return "Rock";
         }
 
+        public  LinkedList<string> _Q5 = new LinkedList<string>();
+
+        /// <summary>
+        /// To call when the answer is right
+        /// </summary>
+        /// <returns></returns>
         public bool WasCorrectlyAnswered()
         {
             if (_inPenaltyBox[_currentPlayer])
@@ -150,7 +185,7 @@ namespace Trivia
                             + _purses[_currentPlayer]
                             + " Gold Coins.");
 
-                    var winner = DidPlayerWin();
+                    var winner = !(_purses[_currentPlayer] == 6);
                     _currentPlayer++;
                     if (_currentPlayer == _players.Count) _currentPlayer = 0;
 
@@ -172,7 +207,7 @@ namespace Trivia
                         + _purses[_currentPlayer]
                         + " Gold Coins.");
 
-                var winner = DidPlayerWin();
+                var winner = !(_purses[_currentPlayer] == 6);
                 _currentPlayer++;
                 if (_currentPlayer == _players.Count) _currentPlayer = 0;
 
@@ -180,6 +215,10 @@ namespace Trivia
             }
         }
 
+        /// <summary>
+        /// To call when the answer is right
+        /// </summary>
+        /// <returns></returns>
         public bool WrongAnswer()
         {
             Console.WriteLine("Question was incorrectly answered");
@@ -188,14 +227,12 @@ namespace Trivia
 
             _currentPlayer++;
             if (_currentPlayer == _players.Count) _currentPlayer = 0;
+            //Must alwys return false 
             return true;
         }
 
-
-        private bool DidPlayerWin()
-        {
-            return !(_purses[_currentPlayer] == 6);
-        }
+        private readonly LinkedList<string> _Q3 = new LinkedList<string>();
+       
     }
 
 }
